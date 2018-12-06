@@ -1,6 +1,7 @@
 import pkg from "./package.json";
 
 const external = Object.keys(pkg.dependencies);
+external.push("path", "fs", "util");
 
 export default {
   input: "src/index.mjs",

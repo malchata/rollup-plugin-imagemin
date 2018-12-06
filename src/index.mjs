@@ -1,5 +1,9 @@
+// Built-ins
+import path from "path";
 import fs from "fs";
 import util from "util";
+
+// Plugin-specific
 import { createFilter } from "rollup-pluginutils";
 import chalk from "chalk";
 import imagemin from "imagemin";
@@ -8,9 +12,16 @@ import imageminPngquant from "imagemin-optipng";
 import imageminGifsicle from "imagemin-gifsicle";
 import imageminSvgo from "imagemin-svgo";
 
+// Promisified methods
+const readFileAsync = util.promisify(fs.readFile);
+
 export default function (userOptions = {}) {
+  // Default options
   const defaults = {
+    disable: false,
+    verbose: false,
     include: "**/*.{svg,png,jpe?g,gif}",
+    hashLength: 16,
     imageminOptions: {
       plugins: [
         imageminJpegtran(),
@@ -20,26 +31,56 @@ export default function (userOptions = {}) {
       ]
     }
   };
+
   const options = Object.assign(defaults, userOptions);
   const filter = createFilter(options.include);
-  const promise = (fn, ...args) => new Promise((resolve, reject) => fn(...args, (err, res) => err ? reject(err) : resolve(res)));
+  const preamble = "imagemin:";
 
   return {
     name: "imagemin",
+    buildStart () {
+      if (options.verbose && options.disable) {
+        console.log(chalk.yellow.bold(`${preamble} Skipping image optimizations.`));
+      }
+
+      if (options.verbose && !options.disable) {
+        console.log(chalk.green.bold(`${preamble} Optimizing images...`));
+      }
+    },
     load (id) {
       if (!filter(id)) {
         return null;
       }
 
-      return Promise.all([
-        promise(fs.stat, id),
-        promise(fs.readFile, id)
-      ]).then(async ([stats, inputImageBuffer]) => {
-        const outputImageBuffer = await imagemin.buffer(inputImageBuffer, options.imageminOptions);
-        const assetId = this.emitAsset(this.getAssetFileName(id), outputImageBuffer);
-        console.dir(id);
+      return readFileAsync(id).then(buffer => {
+        const outputFilename = path.basename(id);
 
-        // return `export default import.meta.ROLLUP_ASSET_URL_${assetId}`;
+        if (!options.disable) {
+          return imagemin.buffer(buffer, options.imageminOptions).then(optimizedBuffer => {
+            const assetId = this.emitAsset(outputFilename, optimizedBuffer);
+
+            if (options.verbose) {
+              const inputSize = buffer.toString().length;
+              const outputSize = optimizedBuffer.toString().length;
+              const smaller = outputSize < inputSize;
+              const difference = Math.round(Math.abs(((outputSize / inputSize) * 100) - 1));
+
+              if (options.verbose) {
+                console.log(chalk.green.bold(`${preamble} Optimized ${outputFilename}: ${smaller ? `~${difference}% smaller 🎉` : chalk.red(`~${difference}% bigger 🤕`)}`));
+              }
+            }
+
+            return `export default import.meta.ROLLUP_ASSET_URL_${assetId}`;
+          }).catch(error => {
+            this.error(`${preamble} Couldn't optimize image: ${error}`);
+          });
+        } else {
+          const assetId = this.emitAsset(outputFilename, buffer);
+
+          return `export default import.meta.ROLLUP_ASSET_URL_${assetId}`;
+        }
+      }).catch(error => {
+        this.error(`${preamble} Couldn't read asset from disk: ${error}`);
       });
     }
   };
