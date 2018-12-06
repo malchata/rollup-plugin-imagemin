@@ -1,0 +1,44 @@
+{
+  "name": "rollup-plugin-imagemin",
+  "version": "0.1.0",
+  "description": "imagemin meets rollup!",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
+  "main": "dist/index.cjs.js",
+  "scripts": {
+    "clean": "npx rimraf dist",
+    "build": "npm run clean && npx rollup -c rollup.config.js",
+    "lint": "npx eslint src/*.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/malchata/rollup-plugin-imagemin.git"
+  },
+  "keywords": [
+    "image",
+    "optimization",
+    "rollup",
+    "performance"
+  ],
+  "author": "Jeremy L. Wagner <jeremy.l.wagner@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/malchata/rollup-plugin-imagemin/issues"
+  },
+  "homepage": "https://github.com/malchata/rollup-plugin-imagemin#readme",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "imagemin": "^6.0.0",
+    "imagemin-gifsicle": "^6.0.1",
+    "imagemin-mozjpeg": "^8.0.0",
+    "imagemin-optipng": "^6.0.0",
+    "imagemin-svgo": "^7.0.0",
+    "rollup-pluginutils": "^2.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^5.9.0",
+    "rimraf": "^2.6.2",
+    "rollup": "^0.67.4"
+  }
+}
