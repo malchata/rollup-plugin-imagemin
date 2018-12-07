@@ -1,16 +1,16 @@
 {
   "name": "rollup-plugin-imagemin",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Imagemin meets Rollup!",
-  "module": "dist/index.es.js",
-  "jsnext:main": "dist/index.es.js",
+  "module": "dist/index.es.mjs",
+  "jsnext:main": "dist/index.es.mjs",
   "main": "dist/index.cjs.js",
   "scripts": {
     "clean": "npx rimraf dist",
     "build": "npm run clean && npx rollup -c rollup.config.js",
     "lint": "npx eslint src/*.mjs",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "npm run lint"
+    "test": "npx mocha --require @babel/register ./test/index.mjs",
+    "prepublish": "npm run lint && npm run test"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,8 @@
     "image",
     "optimization",
     "rollup",
-    "performance"
+    "performance",
+    "webperf"
   ],
   "author": "Jeremy L. Wagner <jeremy.l.wagner@gmail.com>",
   "license": "MIT",
@@ -38,9 +39,13 @@
     "rollup-pluginutils": "^2.3.3"
   },
   "devDependencies": {
+    "@babel/core": "^7.2.0",
+    "@babel/preset-env": "^7.2.0",
+    "@babel/register": "^7.0.0",
     "eslint": "^5.9.0",
     "mocha": "^5.2.0",
     "rimraf": "^2.6.2",
-    "rollup": "^0.67.4"
+    "rollup": "^0.67.4",
+    "rollup-plugin-babel": "^4.0.3"
   }
 }

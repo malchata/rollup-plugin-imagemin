@@ -1,21 +1,35 @@
+import babel from "rollup-plugin-babel";
 import pkg from "./package.json";
 
-const external = Object.keys(pkg.dependencies);
-external.push("path", "fs", "util");
+const external = [
+  "path",
+  "fs",
+  "util",
+  ...Object.keys(pkg.dependencies)
+];
 
-export default {
-  input: "src/index.mjs",
-  output: [
-    {
+export default [
+  {
+    input: "src/index.mjs",
+    output: {
+      file: pkg.module,
+      format: "esm",
+      sourcemap: true
+    },
+    external
+  },
+  {
+    input: "src/index.mjs",
+    plugins: [
+      babel({
+        babelrc: true
+      })
+    ],
+    output: {
       file: pkg.main,
       format: "cjs",
       sourcemap: true
     },
-    {
-      file: pkg.module,
-      format: "esm",
-      sourcemap: true
-    }
-  ],
-  external
-};
+    external
+  }
+];
