@@ -5,6 +5,7 @@ const external = [
   "path",
   "fs",
   "util",
+  "crypto",
   ...Object.keys(pkg.dependencies)
 ];
 

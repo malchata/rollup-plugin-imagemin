@@ -97,6 +97,40 @@ describe("rollup-plugin-imagemin", () => {
       });
     });
   });
+
+  describe("emitFiles: false", () => {
+    it("should NOT output a GIF", () => {
+      return run("fixtures/gif.js", "output/gif.js", true, false).then(() => {
+        return Promise.all([
+          assertExists("output/gif.gif", true)
+        ]);
+      });
+    });
+
+    it("should NOT output a JPG", () => {
+      return run("fixtures/jpg.js", "output/jpg.js", true, false).then(() => {
+        return Promise.all([
+          assertExists("output/jpg.jpg", true)
+        ]);
+      });
+    });
+
+    it("should NOT output a PNG", () => {
+      return run("fixtures/png.js", "output/png.js", true, false).then(() => {
+        return Promise.all([
+          assertExists("output/png.png", true)
+        ]);
+      });
+    });
+
+    it("should NOT output an SVG", () => {
+      return run("fixtures/svg.js", "output/svg.js", true, false).then(() => {
+        return Promise.all([
+          assertExists("output/svg.svg", true)
+        ]);
+      });
+    });
+  });
 });
 
 function promise(fn, ...args) {
@@ -107,12 +141,14 @@ function promise(fn, ...args) {
   });
 }
 
-function run(input, file, disable = false) {
+function run(input, file, disable = false, emitFiles = true) {
   return rollup({
     input,
     plugins: [
       imagemin({
-        disable
+        disable,
+        emitFiles,
+        fileName: "[name][extname]"
       })
     ]
   }).then(bundle => bundle.write({
@@ -122,12 +158,16 @@ function run(input, file, disable = false) {
   }));
 }
 
-async function assertExists(input) {
+async function assertExists(input, shouldNotExist = false) {
   let file;
 
   try {
     file = await stat(input);
   } catch (error) {
+    if (shouldNotExist) {
+      return assert.ok(typeof file === "undefined");
+    }
+
     return assert.fail(`File not found: ${input}`);
   }
 

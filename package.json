@@ -8,9 +8,9 @@
   "scripts": {
     "clean": "npx rimraf dist",
     "build": "npm run clean && npx rollup -c rollup.config.js",
-    "lint": "npx eslint src/*.mjs",
+    "lint": "npx eslint src/index.mjs test/index.mjs",
     "test": "npx mocha --require @babel/register ./test/index.mjs",
-    "prepublish": "npm run lint && npm run test"
+    "prepublish": "npm run lint && npm test"
   },
   "repository": {
     "type": "git",
@@ -36,13 +36,14 @@
     "imagemin-mozjpeg": "^8.0.0",
     "imagemin-optipng": "^6.0.0",
     "imagemin-svgo": "^7.0.0",
+    "mkpath": "^1.0.0",
     "rollup-pluginutils": "^2.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",
     "@babel/preset-env": "^7.2.0",
     "@babel/register": "^7.0.0",
-    "eslint": "^5.9.0",
+    "eslint": "^5.10.0",
     "mocha": "^5.2.0",
     "rimraf": "^2.6.2",
     "rollup": "^0.67.4",
