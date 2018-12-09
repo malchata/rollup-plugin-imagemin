@@ -61,4 +61,4 @@ import someImage from "./some-image.png"; // <-- With the above config, this sho
 
 ## Special thanks
 
-This is my first Rollup plugin. As such, I drew extensive help from the Rollup documentation, but also from the [`rollup-plugin-url'](https://github.com/rollup/rollup-plugin-url) and [`rollup-plugin-image'](https://github.com/rollup/rollup-plugin-image) source code. If anything in the plugin looks familiar to either of those two, it's no coincidence, and I owe a lot to the authors of those plugins for inspiration and guidance.
+This is my first Rollup plugin. As such, I drew extensive help from the Rollup documentation, but also from the [`rollup-plugin-url`](https://github.com/rollup/rollup-plugin-url) and [`rollup-plugin-image`](https://github.com/rollup/rollup-plugin-image) source code. If anything in the plugin looks familiar to either of those two, it's no coincidence, and I owe a lot to the authors of those plugins for inspiration and guidance.
