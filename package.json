@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-imagemin",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Imagemin meets Rollup!",
   "module": "dist/index.es.mjs",
   "jsnext:main": "dist/index.es.mjs",
@@ -30,23 +30,23 @@
   },
   "homepage": "https://github.com/malchata/rollup-plugin-imagemin#readme",
   "dependencies": {
-    "chalk": "^2.4.1",
-    "imagemin": "^6.0.0",
+    "chalk": "^2.4.2",
+    "imagemin": "^6.1.0",
     "imagemin-gifsicle": "^6.0.1",
     "imagemin-mozjpeg": "^8.0.0",
     "imagemin-optipng": "^6.0.0",
     "imagemin-svgo": "^7.0.0",
     "mkpath": "^1.0.0",
-    "rollup-pluginutils": "^2.3.3"
+    "rollup-pluginutils": "^2.4.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.2.0",
-    "@babel/preset-env": "^7.2.0",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
     "@babel/register": "^7.0.0",
-    "eslint": "^5.10.0",
-    "mocha": "^5.2.0",
-    "rimraf": "^2.6.2",
-    "rollup": "^0.67.4",
-    "rollup-plugin-babel": "^4.0.3"
+    "eslint": "^5.15.0",
+    "mocha": "^6.0.2",
+    "rimraf": "^2.6.3",
+    "rollup": "^1.4.0",
+    "rollup-plugin-babel": "^4.3.2"
   }
 }
