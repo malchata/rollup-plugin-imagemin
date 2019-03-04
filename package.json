@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-imagemin",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Imagemin meets Rollup!",
   "module": "dist/index.es.mjs",
   "jsnext:main": "dist/index.es.mjs",
@@ -46,7 +46,7 @@
     "eslint": "^5.15.0",
     "mocha": "^6.0.2",
     "rimraf": "^2.6.3",
-    "rollup": "^1.4.0",
+    "rollup": "^1.4.1",
     "rollup-plugin-babel": "^4.3.2"
   }
 }

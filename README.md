@@ -50,14 +50,9 @@ import someImage from "./some-image.png"; // <-- With the above config, this sho
 - `svgo`: (default: `{ precision: 1, multipass: true }`): Settings to pass to [`imagemin-svgo`](https://www.npmjs.com/package/imagemin-svgo).
 - `plugins`: Array of [plugins](https://www.npmjs.com/search?q=keywords:imageminplugin) to pass to `imagemin`. By default, `imagemin-gifsicle`, `imagemin-jpegtran`, `imagemin-pngquant`, and `imagemin-svgo` are used. Be aware that specifying this option will totally overwrite the array of default plugins, so you will need to specify optimizers for every file type! Most often, the defaults are just fine, so only modify this if you're quite comfortable with configuring `imagemin`.
 
-## Warning!
+## Contributing
 
-`rollup-plugin-imagemin` is not production-ready! While tests pass and everything _seems_ to work fine, it's likely that there be dragons. If you find anything wrong, please file an issue (after first looking at [the list of existing issues](https://github.com/malchata/rollup-plugin-imagemin/issues), of course) and include the following:
-
-- Your OS version.
-- Your Node version.
-- A link to a minimal reproducible test repo. This repo should include a local web server to help save time in reproducing the error locally.
-- The browser and browser version the error occurs in, if applicable.
+Please read the contributing guidelines in [`CONTRIBUTING.md`](https://github.com/malchata/rollup-plugin-imagemin/blob/master/CONTRIBUTING.md).
 
 ## Special thanks
 

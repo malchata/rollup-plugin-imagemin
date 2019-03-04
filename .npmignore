@@ -1,2 +1,7 @@
 *.js.map
-test/output
+test
+CONTRIBUTING.md
+.babelrc
+rollup.config.js
+.eslintrc
+src
