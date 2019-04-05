@@ -63,21 +63,22 @@ export default function (userOptions = {}) {
   userOptions = dropUndefinedKeys(userOptions);
 
   // Inject default plugin factories
-  const allPluginsFactories = Object.assign({
+  const allPluginsFactories = {
     jpegtran: imageminJpegtran,
     pngquant: imageminPngquant,
     gifsicle: imageminGifsicle,
-    svgo: imageminSvgo
-  }, userOptions.plugins);
+    svgo: imageminSvgo,
+    ...(userOptions.plugins)
+  };
     // Get pairs to use array functions
   const allPluginsFactoriesPairs = Object.entries(allPluginsFactories);
   // Merge 1st level options
-  const pluginOptions = Object.assign({}, defaultOptions, userOptions);
+  const pluginOptions = {...defaultOptions, ...userOptions};
   // Merge user options with defaults for each plugin
   allPluginsFactoriesPairs.reduce((pluginOptionsAcc, [pluginName,]) => {
     // Remove `undefined` plugin user options
     const pluginUserOpts = dropUndefinedKeys(userOptions[pluginName] || {});
-    pluginOptionsAcc[pluginName] = Object.assign(defaultOptions[pluginName], pluginUserOpts);
+    pluginOptionsAcc[pluginName] = {...(defaultOptions[pluginName]), ...pluginUserOpts};
     return pluginOptionsAcc;
   }, pluginOptions);
   // Run factories

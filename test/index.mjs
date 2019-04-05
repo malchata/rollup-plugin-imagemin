@@ -153,7 +153,7 @@ describe("rollup-plugin-imagemin", () => {
         it(`Should call ${pluginName} with custom option`, () =>
           mockPlugin(`fixtures/${type}.js`, `output/${type}.js`, pluginName, overrideSample).then(({ factoryMock, transformMock }) => {
             assert.equal(factoryMock.callCount, 1);
-            assert.deepEqual(factoryMock.lastCall.args, [Object.assign(getDefaultOptions()[pluginName], overrideSample)]);
+            assert.deepEqual(factoryMock.lastCall.args, [{...(getDefaultOptions()[pluginName]), ...overrideSample}]);
             assert.equal(transformMock.callCount, 1);
             assert.equal(transformMock.lastCall.args.length, 1);
             assert.ok(transformMock.lastCall.args[0] instanceof Buffer);
@@ -161,7 +161,7 @@ describe("rollup-plugin-imagemin", () => {
         it(`Should call ${pluginName} with custom options`, () =>
           mockPlugin(`fixtures/${type}.js`, `output/${type}.js`, pluginName, customOpt).then(({ factoryMock, transformMock }) => {
             assert.equal(factoryMock.callCount, 1);
-            assert.deepEqual(factoryMock.lastCall.args, [Object.assign(getDefaultOptions()[pluginName], customOpt)]);
+            assert.deepEqual(factoryMock.lastCall.args, [{...(getDefaultOptions()[pluginName]), ...customOpt}]);
             assert.equal(transformMock.callCount, 1);
             assert.equal(transformMock.lastCall.args.length, 1);
             assert.ok(transformMock.lastCall.args[0] instanceof Buffer);
