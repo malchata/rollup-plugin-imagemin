@@ -44,11 +44,40 @@ import someImage from "./some-image.png"; // <-- With the above config, this sho
   - `[hash]`: The has of the input file.
   - `[extname]`: The extension of the input file.
 - `publicPath` (default: `""`): A folder for where to put optimized assets. Use this to separate your images into a separate folder.
-- `gifsicle`: (default: `{ optimizationLevel: 3 }`): Settings to pass to [`imagemin-gifsicle`](https://www.npmjs.com/package/imagemin-gifsicle).
-- `jpegtran` (default: `{ progressive: true }`): Settings to pass to [`imagemin-jpegtran`](https://www.npmjs.com/package/imagemin-jpegtran).
-- `pngquant`: (default: `{ speed: 1, strip: true }`): Settings to pass to [`imagemin-pngquant`](https://www.npmjs.com/package/imagemin-pngquant).
-- `svgo`: (default: `{ precision: 1, multipass: true }`): Settings to pass to [`imagemin-svgo`](https://www.npmjs.com/package/imagemin-svgo).
-- `plugins`: Array of [plugins](https://www.npmjs.com/search?q=keywords:imageminplugin) to pass to `imagemin`. By default, `imagemin-gifsicle`, `imagemin-jpegtran`, `imagemin-pngquant`, and `imagemin-svgo` are used. Be aware that specifying this option will totally overwrite the array of default plugins, so you will need to specify optimizers for every file type! Most often, the defaults are just fine, so only modify this if you're quite comfortable with configuring `imagemin`.
+- `gifsicle`: (default: `{ optimizationLevel: 3 }`): Settings to merge with default, to pass to [`imagemin-gifsicle`](https://www.npmjs.com/package/imagemin-gifsicle).
+- `jpegtran` (default: `{ progressive: true }`): Settings to merge with default, to pass to [`imagemin-jpegtran`](https://www.npmjs.com/package/imagemin-jpegtran).
+- `pngquant`: (default: `{ speed: 1, strip: true }`): Settings to merge with default, to pass to [`imagemin-pngquant`](https://www.npmjs.com/package/imagemin-pngquant).
+- `svgo`: (default: `{ precision: 1, multipass: true }`): Settings to merge with default, to pass to [`imagemin-svgo`](https://www.npmjs.com/package/imagemin-svgo).
+- `plugins`: object with *plugin names* as keys and [plugins](https://www.npmjs.com/search?q=keywords:imageminplugin) as value to pass to `imagemin`. By default, `{gifsicle: 'imagemin-gifsicle', jpegtran: 'imagemin-jpegtran', pngquant: 'imagemin-pngquant', svgo: 'imagemin-svgo'}` are used. Each plugin
+function must be a factory, taking the plugin's config (the object at `options[pluginName]`, merged with defaults), and returning an imagemin buffer transformer.
+
+## Using custom plugins
+
+You can use custom plugins the following way:
+
+```javascript
+// rollup.config.js
+import imagemin from "rollup-plugin-imagemin";
+import myCustomPlugin from "imagemin-my-custom-plugin";
+
+export default {
+  plugins: [
+    imagemin({
+        myCustomPlugin: {
+            // Config to pass to `myCustomPlugin`'s factory
+        },
+        plugins: {
+            myCustomPlugin,
+        }
+    })
+  ],
+  input: "src/index.js"
+  output: {
+    format: "esm",
+    file: "./dist/index.js"
+  }
+};
+```
 
 ## Contributing
 
