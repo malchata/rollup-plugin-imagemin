@@ -24,6 +24,13 @@
     "webperf"
   ],
   "author": "Jeremy L. Wagner <jeremy.l.wagner@gmail.com>",
+  "contributors": [
+      {
+          "name": "GerkinDev",
+          "email": "agermain@ithoughts.io",
+          "url": "https://ithoughts.io/"
+      }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/malchata/rollup-plugin-imagemin/issues"
