@@ -10,6 +10,7 @@
     "build": "npm run clean && npx rollup -c rollup.config.js",
     "lint": "npx eslint src/index.mjs test/index.mjs",
     "test": "npx mocha --require @babel/register ./test/index.mjs",
+    "prepare": "npm run build",
     "prepublish": "npm run lint && npm test"
   },
   "repository": {
