@@ -22,9 +22,7 @@ export default [
   {
     input: "src/index.mjs",
     plugins: [
-      babel({
-        babelrc: true
-      })
+      babel()
     ],
     output: {
       file: pkg.main,

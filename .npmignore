@@ -1,7 +1,8 @@
 *.js.map
+*.mjs.map
 test
 CONTRIBUTING.md
-.babelrc
+babel.config.js
 rollup.config.js
 .eslintrc
 src
