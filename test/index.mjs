@@ -7,8 +7,9 @@ import assert from "assert";
 import util from "util";
 
 // Test-specific
-import imagemin from "../src";
+import imagemin, { getDefaultOptions } from "../src";
 import rimraf from "rimraf";
+import { stub } from "simple-mock";
 import { rollup } from "rollup";
 
 // Change process to tests directory
@@ -131,6 +132,43 @@ describe("rollup-plugin-imagemin", () => {
       });
     });
   });
+
+  describe("Plugin options", () => {
+    const customOpt = {foo: "bar"};
+    [
+      {type: "gif", pluginName: "gifsicle", overrideSample: {precision: 42}},
+      {type: "jpg", pluginName: "jpegtran", overrideSample: {progressive: false}},
+      {type: "png", pluginName: "pngquant", overrideSample: {speed: 42}},
+      {type: "svg", pluginName: "svgo",     overrideSample: {precision: 42}},
+    ].forEach(({type, pluginName, overrideSample}) => {
+      describe(type.toUpperCase(), () => {
+        it(`Should call ${pluginName} with default option`, () =>
+          mockPlugin(`fixtures/${type}.js`, `output/${type}.js`, pluginName).then(({ factoryMock, transformMock }) => {
+            assert.equal(factoryMock.callCount, 1);
+            assert.deepEqual(factoryMock.lastCall.args, [getDefaultOptions()[pluginName]]);
+            assert.equal(transformMock.callCount, 1);
+            assert.equal(transformMock.lastCall.args.length, 1);
+            assert.ok(transformMock.lastCall.args[0] instanceof Buffer);
+          }));
+        it(`Should call ${pluginName} with custom option`, () =>
+          mockPlugin(`fixtures/${type}.js`, `output/${type}.js`, pluginName, overrideSample).then(({ factoryMock, transformMock }) => {
+            assert.equal(factoryMock.callCount, 1);
+            assert.deepEqual(factoryMock.lastCall.args, [{...(getDefaultOptions()[pluginName]), ...overrideSample}]);
+            assert.equal(transformMock.callCount, 1);
+            assert.equal(transformMock.lastCall.args.length, 1);
+            assert.ok(transformMock.lastCall.args[0] instanceof Buffer);
+          }));
+        it(`Should call ${pluginName} with custom options`, () =>
+          mockPlugin(`fixtures/${type}.js`, `output/${type}.js`, pluginName, customOpt).then(({ factoryMock, transformMock }) => {
+            assert.equal(factoryMock.callCount, 1);
+            assert.deepEqual(factoryMock.lastCall.args, [{...(getDefaultOptions()[pluginName]), ...customOpt}]);
+            assert.equal(transformMock.callCount, 1);
+            assert.equal(transformMock.lastCall.args.length, 1);
+            assert.ok(transformMock.lastCall.args[0] instanceof Buffer);
+          }));
+      });
+    });
+  });
 });
 
 function promise(fn, ...args) {
@@ -141,9 +179,33 @@ function promise(fn, ...args) {
   });
 }
 
-function run(input, file, disable = false, emitFiles = true) {
+function mockPlugin(inputFile, outputFile, pluginName, config){
+  // Simple pass-through mock
+  const transformMock = stub().callFn(buf => buf);
+  const factoryMock = stub().returnWith(transformMock);
   return rollup({
-    input,
+    input: inputFile,
+    plugins: [
+      imagemin({
+        fileName: "[name][extname]",
+        [pluginName]: config,
+        plugins: {
+          [pluginName]: factoryMock
+        },
+      })
+    ]
+  }).then(bundle => bundle.write({
+    format: "esm",
+    file: outputFile,
+    assetFileNames: "[name][extname]"
+  })).then(() => Promise.resolve({
+    factoryMock,
+    transformMock,
+  }));
+}
+function run(inputFile, outputFile, disable = false, emitFiles = true) {
+  return rollup({
+    input: inputFile,
     plugins: [
       imagemin({
         disable,
@@ -153,7 +215,7 @@ function run(input, file, disable = false, emitFiles = true) {
     ]
   }).then(bundle => bundle.write({
     format: "esm",
-    file,
+    file: outputFile,
     assetFileNames: "[name][extname]"
   }));
 }

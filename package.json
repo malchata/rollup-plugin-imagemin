@@ -10,6 +10,7 @@
     "build": "npm run clean && npx rollup -c rollup.config.js",
     "lint": "npx eslint src/index.mjs test/index.mjs",
     "test": "npx mocha --require @babel/register ./test/index.mjs",
+    "prepare": "npm run build",
     "prepublish": "npm run lint && npm test"
   },
   "repository": {
@@ -24,6 +25,13 @@
     "webperf"
   ],
   "author": "Jeremy L. Wagner <jeremy.l.wagner@gmail.com>",
+  "contributors": [
+      {
+          "name": "GerkinDev",
+          "email": "agermain@ithoughts.io",
+          "url": "https://ithoughts.io/"
+      }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/malchata/rollup-plugin-imagemin/issues"
@@ -47,6 +55,7 @@
     "mocha": "^6.0.2",
     "rimraf": "^2.6.3",
     "rollup": "^1.4.1",
-    "rollup-plugin-babel": "^4.3.2"
+    "rollup-plugin-babel": "^4.3.2",
+    "simple-mock": "^0.8.0"
   }
 }
