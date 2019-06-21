@@ -44,6 +44,8 @@ import someImage from "./some-image.png"; // <-- With the above config, this sho
   - `[hash]`: The has of the input file.
   - `[extname]`: The extension of the input file.
 - `publicPath` (default: `""`): A folder for where to put optimized assets. Use this to separate your images into a separate folder.
+- `preserveTree` (default: `false`): If `true`, preserve directory structure relative to `process.cwd()`.
+Can also be a path specifying root from where directory structure should be preserved.
 - `gifsicle`: (default: `{ optimizationLevel: 3 }`): Settings to merge with default, to pass to [`imagemin-gifsicle`](https://www.npmjs.com/package/imagemin-gifsicle).
 - `jpegtran` (default: `{ progressive: true }`): Settings to merge with default, to pass to [`imagemin-jpegtran`](https://www.npmjs.com/package/imagemin-jpegtran).
 - `pngquant`: (default: `{ speed: 1, strip: true }`): Settings to merge with default, to pass to [`imagemin-pngquant`](https://www.npmjs.com/package/imagemin-pngquant).
