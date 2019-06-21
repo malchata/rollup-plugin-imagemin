@@ -30,6 +30,7 @@ export const getDefaultOptions = () => JSON.parse(JSON.stringify({
   exclude: "",
   fileName: "[name]-[hash][extname]",
   publicPath: "",
+  preserveTree: false,
   jpegtran: {
     progressive: true
   },
@@ -108,7 +109,11 @@ export default function (userOptions = {}) {
 
       return readFile(id).then(buffer => {
         const extname = path.extname(id);
-        const name = path.basename(id, extname);
+        const name = pluginOptions.preserveTree
+          ? typeof pluginOptions.preserveTree === "string"
+            ? path.join(path.dirname(id.replace(path.resolve(pluginOptions.preserveTree), "")), path.basename(id, extname))
+            : path.join(path.dirname(id.replace(process.cwd(), "")), path.basename(id, extname))
+          : path.basename(id, extname);
         let hash, outputFileName;
 
         if (!pluginOptions.disable) {
