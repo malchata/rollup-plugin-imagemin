@@ -11,7 +11,7 @@ const external = [
 
 export default [
   {
-    input: "src/index.mjs",
+    input: "src/index.js",
     output: {
       file: pkg.module,
       format: "esm",
@@ -20,7 +20,7 @@ export default [
     external
   },
   {
-    input: "src/index.mjs",
+    input: "src/index.js",
     plugins: [
       babel()
     ],

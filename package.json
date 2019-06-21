@@ -2,14 +2,14 @@
   "name": "rollup-plugin-imagemin",
   "version": "0.4.0",
   "description": "Imagemin meets Rollup!",
-  "module": "dist/index.es.mjs",
-  "jsnext:main": "dist/index.es.mjs",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
   "main": "dist/index.cjs.js",
   "scripts": {
     "clean": "npx rimraf dist",
     "build": "npm run clean && npx rollup -c rollup.config.js",
-    "lint": "npx eslint src/index.mjs test/index.mjs",
-    "test": "npx mocha --require @babel/register ./test/index.mjs",
+    "lint": "npx eslint src/index.js test/index.js",
+    "test": "npx mocha --require @babel/register ./test/index.js",
     "prepare": "npm run build",
     "prepublish": "npm run lint && npm test"
   },
