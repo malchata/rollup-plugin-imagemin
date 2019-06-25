@@ -111,8 +111,8 @@ export default function (userOptions = {}) {
         const extname = path.extname(id);
         const name = pluginOptions.preserveTree
           ? typeof pluginOptions.preserveTree === "string"
-            ? path.join(path.dirname(id.replace(path.resolve(pluginOptions.preserveTree), "")), path.basename(id, extname))
-            : path.join(path.dirname(id.replace(process.cwd(), "")), path.basename(id, extname))
+            ? path.join(path.dirname(id.replace(`${path.resolve(pluginOptions.preserveTree)}${path.sep}`, "")), path.basename(id, extname))
+            : path.join(path.dirname(id.replace(`${process.cwd()}${path.sep}`, "")), path.basename(id, extname))
           : path.basename(id, extname);
         let hash, outputFileName;
 
