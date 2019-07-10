@@ -133,6 +133,74 @@ describe("rollup-plugin-imagemin", () => {
     });
   });
 
+  describe("preserveTree: true", () => {
+    it("should preserve tree relative to cwd", () => {
+      return run("fixtures/gif.js", "output/gif.js", true, true, true).then(() => {
+        return Promise.all([
+          assertExists("output/fixtures/gif.gif")
+        ]);
+      });
+    });
+
+    it("should preserve tree relative to cwd", () => {
+      return run("fixtures/jpg.js", "output/jpg.js", true, true, true).then(() => {
+        return Promise.all([
+          assertExists("output/fixtures/jpg.jpg")
+        ]);
+      });
+    });
+
+    it("should preserve tree relative to cwd", () => {
+      return run("fixtures/png.js", "output/png.js", true, true, true).then(() => {
+        return Promise.all([
+          assertExists("output/fixtures/png.png")
+        ]);
+      });
+    });
+
+    it("should preserve tree relative to cwd", () => {
+      return run("fixtures/svg.js", "output/svg.js", true, true, true).then(() => {
+        return Promise.all([
+          assertExists("output/fixtures/svg.svg")
+        ]);
+      });
+    });
+  });
+
+  describe("preserveTree: ../", () => {
+    it("should preserve tree relative to ../", () => {
+      return run("fixtures/gif.js", "output/gif.js", true, true, "../").then(() => {
+        return Promise.all([
+          assertExists("output/test/fixtures/gif.gif")
+        ]);
+      });
+    });
+
+    it("should preserve tree relative to ../", () => {
+      return run("fixtures/jpg.js", "output/jpg.js", true, true, "../").then(() => {
+        return Promise.all([
+          assertExists("output/test/fixtures/jpg.jpg")
+        ]);
+      });
+    });
+
+    it("should preserve tree relative to ../", () => {
+      return run("fixtures/png.js", "output/png.js", true, true, "../").then(() => {
+        return Promise.all([
+          assertExists("output/test/fixtures/png.png")
+        ]);
+      });
+    });
+
+    it("should preserve tree relative to ../", () => {
+      return run("fixtures/svg.js", "output/svg.js", true, true, "../").then(() => {
+        return Promise.all([
+          assertExists("output/test/fixtures/svg.svg")
+        ]);
+      });
+    });
+  });
+
   describe("Plugin options", () => {
     const customOpt = {
       foo: "bar"
@@ -230,14 +298,15 @@ function mockPlugin (inputFile, outputFile, pluginName, config){
   }));
 }
 
-function run (inputFile, outputFile, disable = false, emitFiles = true) {
+function run (inputFile, outputFile, disable = false, emitFiles = true, preserveTree = false) {
   return rollup({
     input: inputFile,
     plugins: [
       imagemin({
         disable,
         emitFiles,
-        fileName: "[name][extname]"
+        fileName: "[name][extname]",
+        preserveTree
       })
     ]
   }).then(bundle => bundle.write({
