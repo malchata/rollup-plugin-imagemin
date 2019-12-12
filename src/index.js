@@ -2,10 +2,16 @@
 import path from "path";
 import fs from "fs";
 import util from "util";
-import crypto from "crypto";
+
+// Helpers
+import dropUndefinedKeys from "./helpers/drop-undefined-keys";
+import generateOutputFileName from "./helpers/generate-output-file-name";
+import getDefaultOptions from "./helpers/get-default-options";
+import logOptimizationResult from "./helpers/log-optimization-result";
+import resolveAssetName from "./helpers/resolve-asset-name";
 
 // Plugin-specific
-import { createFilter } from "rollup-pluginutils";
+import { createFilter } from "@rollup/pluginutils";
 import chalk from "chalk";
 import mkpath from "mkpath";
 import imagemin from "imagemin";
@@ -13,48 +19,12 @@ import imageminJpegtran from "imagemin-mozjpeg";
 import imageminPngquant from "imagemin-optipng";
 import imageminGifsicle from "imagemin-gifsicle";
 import imageminSvgo from "imagemin-svgo";
+import glob from "glob";
 
 // Promisified methods
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 const mkpathAsync = util.promisify(mkpath);
-
-// Returns a new object each time, so that it can't be modified (while it is exported)
-// It is required to export this value for testing
-export const getDefaultOptions = () => JSON.parse(JSON.stringify({
-  disable: false,
-  verbose: false,
-  emitFiles: true,
-  hashLength: 16,
-  include: "**/*.{svg,png,jpg,jpeg,gif}",
-  exclude: "",
-  fileName: "[name]-[hash][extname]",
-  publicPath: "",
-  preserveTree: false,
-  jpegtran: {
-    progressive: true
-  },
-  pngquant: {
-    speed: 1,
-    strip: true
-  },
-  gifsicle: {
-    optimizationLevel: 3
-  },
-  svgo: {
-    precision: 1,
-    multipass: true
-  },
-  plugins: {}
-}));
-
-const dropUndefinedKeys = obj => Object.entries(obj).reduce((acc, [key, val]) => {
-  if (typeof val !== "undefined") {
-    acc[key] = val;
-  }
-
-  return acc;
-}, {});
 
 export default function (userOptions = {}) {
   // Default options
@@ -76,14 +46,14 @@ export default function (userOptions = {}) {
   const allPluginsFactoriesPairs = Object.entries(allPluginsFactories);
 
   // Merge 1st level options
-  const pluginOptions = {...defaultOptions, ...userOptions};
+  const pluginOptions = { ...defaultOptions, ...userOptions };
 
   // Merge user options with defaults for each plugin
-  allPluginsFactoriesPairs.reduce((pluginOptionsAcc, [pluginName,]) => {
+  allPluginsFactoriesPairs.reduce((pluginOptionsAcc, [pluginName]) => {
     // Remove `undefined` plugin user options
     const pluginUserOpts = dropUndefinedKeys(userOptions[pluginName] || {});
 
-    pluginOptionsAcc[pluginName] = {...(defaultOptions[pluginName]), ...pluginUserOpts};
+    pluginOptionsAcc[pluginName] = { ...(defaultOptions[pluginName]), ...pluginUserOpts };
 
     return pluginOptionsAcc;
   }, pluginOptions);
@@ -109,27 +79,18 @@ export default function (userOptions = {}) {
 
       return readFile(id).then(buffer => {
         const extname = path.extname(id);
-        const name = pluginOptions.preserveTree
-          ? typeof pluginOptions.preserveTree === "string"
-            ? path.join(path.dirname(id.replace(`${path.resolve(pluginOptions.preserveTree)}${path.sep}`, "")), path.basename(id, extname))
-            : path.join(path.dirname(id.replace(`${process.cwd()}${path.sep}`, "")), path.basename(id, extname))
-          : path.basename(id, extname);
-        let hash, outputFileName;
+        const name = resolveAssetName(id, extname, pluginOptions);
+        let outputFileName;
 
         if (!pluginOptions.disable) {
           return imagemin.buffer(buffer, {
             plugins: pluginOptions.plugins
           }).then(optimizedBuffer => {
-            hash = crypto.createHash("sha1").update(optimizedBuffer).digest("hex").substr(0, pluginOptions.hashLength);
-            outputFileName = path.join(pluginOptions.publicPath, pluginOptions.fileName.replace(/\[name\]/i, name).replace(/\[hash\]/i, hash).replace(/\[extname\]/i, extname));
+            outputFileName = generateOutputFileName(buffer, name, extname, pluginOptions);
             assets[outputFileName] = optimizedBuffer;
 
             if (pluginOptions.verbose) {
-              const inputSize = buffer.toString().length;
-              const outputSize = optimizedBuffer.toString().length;
-              const smaller = outputSize < inputSize;
-              const difference = Math.round(Math.abs(((outputSize / inputSize) * 100) - 1));
-              console.log(chalk.green.bold(`${logPrefix} Optimized ${outputFileName}: ${smaller ? `~${difference}% smaller 🎉` : chalk.red(`~${difference}% bigger 🤕`)}`));
+              logOptimizationResult(buffer, optimizedBuffer, logPrefix, outputFileName);
             }
 
             return `export default new URL("${outputFileName}", import.meta.url).href;`;
@@ -137,8 +98,7 @@ export default function (userOptions = {}) {
             this.error(`${logPrefix} Couldn't optimize image: ${error}`);
           });
         } else {
-          hash = crypto.createHash("sha1").update(buffer).digest("hex").substr(0, pluginOptions.hashLength);
-          outputFileName = path.join(pluginOptions.publicPath, pluginOptions.fileName.replace(/\[name\]/i, name).replace(/\[hash\]/i, hash).replace(/\[extname\]/i, extname));
+          outputFileName = generateOutputFileName(buffer, name, extname, pluginOptions);
           assets[outputFileName] = buffer;
 
           return `export default new URL("${outputFileName}", import.meta.url).href;`;
@@ -146,6 +106,53 @@ export default function (userOptions = {}) {
       }).catch(error => {
         this.error(`${logPrefix} Couldn't read asset from disk: ${error}`);
       });
+    },
+    buildEnd () {
+      if (pluginOptions.dirs.length) {
+        for (let dirIndex in pluginOptions.dirs) {
+          const dir = pluginOptions.dirs[dirIndex];
+
+          glob(dir, (error, files) => {
+            if (error) {
+              this.error(error);
+            }
+
+            for (let fileIndex in files) {
+              const file = files[fileIndex];
+
+              readFile(file).then(buffer => {
+                const extname = path.extname(file);
+                const name = resolveAssetName(file, extname, pluginOptions);
+                let outputFileName;
+
+                if (!pluginOptions.disable) {
+                  return imagemin.buffer(buffer, {
+                    plugins: pluginOptions.plugins
+                  }).then(optimizedBuffer => {
+                    outputFileName = generateOutputFileName(buffer, name, extname, pluginOptions);
+                    assets[outputFileName] = optimizedBuffer;
+
+                    if (pluginOptions.verbose) {
+                      logOptimizationResult(buffer, optimizedBuffer, logPrefix, outputFileName);
+                    }
+
+                    return `export default new URL("${outputFileName}", import.meta.url).href;`;
+                  }).catch(error => {
+                    this.error(`${logPrefix} Couldn't optimize image: ${error}`);
+                  });
+                } else {
+                  outputFileName = generateOutputFileName(buffer, name, extname, pluginOptions);
+                  assets[outputFileName] = buffer;
+
+                  return `export default new URL("${outputFileName}", import.meta.url).href;`;
+                }
+              }).catch(error => {
+                this.error(`${logPrefix} Couldn't read asset from disk: ${error}`);
+              });
+            }
+          });
+        }
+      }
     },
     generateBundle (rollupOptions) {
       if (!pluginOptions.emitFiles) {
@@ -156,6 +163,8 @@ export default function (userOptions = {}) {
 
       return Promise.all(Object.keys(assets).map(name => {
         const assetBase = path.resolve(path.dirname(path.join(base, name)));
+
+        console.log(path.join(base, name));
 
         return mkpathAsync(assetBase).then(() => {
           return writeFile(path.join(base, name), assets[name]).catch(error => {

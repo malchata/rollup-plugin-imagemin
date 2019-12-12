@@ -4,7 +4,7 @@
 import fs from "fs";
 
 import assert from "assert";
-import util from "util";
+import { promisify } from "util";
 
 // Test-specific
 import imagemin, { getDefaultOptions } from "../src";
@@ -16,7 +16,7 @@ import { rollup } from "rollup";
 process.chdir(__dirname);
 
 // Promisified methods
-const stat = util.promisify(fs.stat);
+const stat = promisify(fs.stat);
 
 describe("rollup-plugin-imagemin", () => {
   describe("disable: false", () => {
@@ -201,6 +201,16 @@ describe("rollup-plugin-imagemin", () => {
     });
   });
 
+  // describe("dirs: ['fixtures/just-some-images/**/*.{jpeg,jpg,gif,svg,png}']", () => {
+  //   it("should preserve tree relative to ../", () => {
+  //     return run("fixtures/gif.js", "output/gif.js", true, true, "../").then(() => {
+  //       return Promise.all([
+  //         assertExists("output/test/fixtures/gif.gif")
+  //       ]);
+  //     });
+  //   });
+  // });
+
   describe("Plugin options", () => {
     const customOpt = {
       foo: "bar"
@@ -298,7 +308,7 @@ function mockPlugin (inputFile, outputFile, pluginName, config){
   }));
 }
 
-function run (inputFile, outputFile, disable = false, emitFiles = true, preserveTree = false) {
+function run (inputFile, outputFile, disable = false, emitFiles = true, preserveTree = false, dirs = []) {
   return rollup({
     input: inputFile,
     plugins: [
@@ -306,7 +316,8 @@ function run (inputFile, outputFile, disable = false, emitFiles = true, preserve
         disable,
         emitFiles,
         fileName: "[name][extname]",
-        preserveTree
+        preserveTree,
+        dirs
       })
     ]
   }).then(bundle => bundle.write({
