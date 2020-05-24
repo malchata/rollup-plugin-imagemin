@@ -1,18 +1,17 @@
-// Built-ins
-import path from "path";
-import fs from "fs";
-import util from "util";
-import crypto from "crypto";
+import path from 'path';
+import fs from 'fs';
+import util from 'util';
+import crypto from 'crypto';
+import { createFilter } from 'rollup-pluginutils';
+import chalk from 'chalk';
+import mkpath from 'mkpath';
+import imagemin from 'imagemin';
+import imageminJpegtran from 'imagemin-mozjpeg';
+import imageminPngquant from 'imagemin-optipng';
+import imageminGifsicle from 'imagemin-gifsicle';
+import imageminSvgo from 'imagemin-svgo';
 
-// Plugin-specific
-import { createFilter } from "rollup-pluginutils";
-import chalk from "chalk";
-import mkpath from "mkpath";
-import imagemin from "imagemin";
-import imageminJpegtran from "imagemin-mozjpeg";
-import imageminPngquant from "imagemin-optipng";
-import imageminGifsicle from "imagemin-gifsicle";
-import imageminSvgo from "imagemin-svgo";
+// Built-ins
 
 // Promisified methods
 const readFile = util.promisify(fs.readFile);
@@ -21,7 +20,7 @@ const mkpathAsync = util.promisify(mkpath);
 
 // Returns a new object each time, so that it can't be modified (while it is exported)
 // It is required to export this value for testing
-export const getDefaultOptions = () => JSON.parse(JSON.stringify({
+const getDefaultOptions = () => JSON.parse(JSON.stringify({
   disable: false,
   verbose: false,
   emitFiles: true,
@@ -56,7 +55,7 @@ const dropUndefinedKeys = obj => Object.entries(obj).reduce((acc, [key, val]) =>
   return acc;
 }, {});
 
-export default function (userOptions = {}) {
+function index (userOptions = {}) {
   // Default options
   const defaultOptions = getDefaultOptions();
 
@@ -166,3 +165,7 @@ export default function (userOptions = {}) {
     }
   };
 }
+
+export default index;
+export { getDefaultOptions };
+//# sourceMappingURL=index.es.js.map
