@@ -131,7 +131,10 @@ function index (userOptions = {}) {
               console.log(chalk.green.bold(`${logPrefix} Optimized ${outputFileName}: ${smaller ? `~${difference}% smaller 🎉` : chalk.red(`~${difference}% bigger 🤕`)}`));
             }
 
-            return `export default new URL("${outputFileName}", typeof window !== "undefined" ? import.meta.url : "").href;`;
+            return `
+              let exportedUrl = typeof window !== "undefined" ? new URL("${outputFileName}", import.meta.url) : new URL("${outputFileName}");
+              export default exportedUrl;
+            `;
           }).catch(error => {
             this.error(`${logPrefix} Couldn't optimize image: ${error}`);
           });
@@ -140,7 +143,10 @@ function index (userOptions = {}) {
           outputFileName = path.join(pluginOptions.publicPath, pluginOptions.fileName.replace(/\[name\]/i, name).replace(/\[hash\]/i, hash).replace(/\[extname\]/i, extname));
           assets[outputFileName] = buffer;
 
-          return `export default new URL("${outputFileName}", typeof window !== "undefined" ? import.meta.url : "").href;`;
+          return `
+            let exportedUrl = typeof window !== "undefined" ? new URL("${outputFileName}", import.meta.url) : new URL("${outputFileName}");
+            export default exportedUrl;
+          `;
         }
       }).catch(error => {
         this.error(`${logPrefix} Couldn't read asset from disk: ${error}`);
