@@ -5,7 +5,7 @@ import util from "util";
 import crypto from "crypto";
 
 // Plugin-specific
-import { createFilter } from "rollup-pluginutils";
+import { createFilter } from "@rollup/pluginutils";
 import chalk from "chalk";
 import mkpath from "mkpath";
 import imagemin from "imagemin";
