@@ -103,6 +103,7 @@ export default function (userOptions = {}) {
       }
     },
     load (id) {
+      id = path.resolve(id); // Normalise id to match native representation. Required if used with Vite which uses Unix style paths for id.
       if (!filter(id)) {
         return null;
       }
