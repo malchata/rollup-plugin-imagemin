@@ -8,7 +8,7 @@ import crypto from "crypto";
 import { createFilter } from "@rollup/pluginutils";
 import chalk from "chalk";
 import mkpath from "mkpath";
-import imagemin from "imagemin";
+import imageminVendor from "imagemin";
 import imageminJpegtran from "imagemin-mozjpeg";
 import imageminPngquant from "imagemin-optipng";
 import imageminGifsicle from "imagemin-gifsicle";
@@ -56,7 +56,7 @@ const dropUndefinedKeys = obj => Object.entries(obj).reduce((acc, [key, val]) =>
   return acc;
 }, {});
 
-export default function (userOptions = {}) {
+export function imagemin (userOptions = {}) {
   // Default options
   const defaultOptions = getDefaultOptions();
 
@@ -118,7 +118,7 @@ export default function (userOptions = {}) {
         let hash, outputFileName;
 
         if (!pluginOptions.disable) {
-          return imagemin.buffer(buffer, {
+          return imageminVendor.buffer(buffer, {
             plugins: pluginOptions.plugins
           }).then(optimizedBuffer => {
             hash = crypto.createHash("sha1").update(optimizedBuffer).digest("hex").substr(0, pluginOptions.hashLength);

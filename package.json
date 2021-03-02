@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-imagemin",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Imagemin meets Rollup!",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",

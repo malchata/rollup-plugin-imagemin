@@ -7,7 +7,7 @@ import assert from "assert";
 import util from "util";
 
 // Test-specific
-import imagemin, { getDefaultOptions } from "../src";
+import { imagemin, getDefaultOptions } from "../src";
 import rimraf from "rimraf";
 import { stub } from "simple-mock";
 import { rollup } from "rollup";

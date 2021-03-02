@@ -12,7 +12,7 @@ npm i rollup-plugin-imagemin --save-dev
 
 ```javascript
 // rollup.config.js
-import imagemin from "rollup-plugin-imagemin";
+import { imagemin } from "rollup-plugin-imagemin";
 
 export default {
   plugins: [
