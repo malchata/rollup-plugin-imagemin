@@ -45,7 +45,7 @@
     "imagemin-optipng": "^7.0.0",
     "imagemin-svgo": "^7.0.0",
     "mkpath": "^1.0.0",
-    "rollup-pluginutils": "^2.8.1"
+    "@rollup/pluginutils": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.4",
@@ -54,7 +54,7 @@
     "eslint": "^6.0.1",
     "mocha": "^6.1.4",
     "rimraf": "^2.6.3",
-    "rollup": "^1.16.7",
+    "rollup": "^1.20.0",
     "rollup-plugin-babel": "^4.3.3",
     "simple-mock": "^0.8.0"
   }
