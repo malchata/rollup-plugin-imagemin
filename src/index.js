@@ -122,7 +122,7 @@ export default function (userOptions = {}) {
             plugins: pluginOptions.plugins
           }).then(optimizedBuffer => {
             hash = crypto.createHash("sha1").update(optimizedBuffer).digest("hex").substr(0, pluginOptions.hashLength);
-            outputFileName = path.join(pluginOptions.publicPath, pluginOptions.fileName.replace(/\[name\]/i, name).replace(/\[hash\]/i, hash).replace(/\[extname\]/i, extname));
+            outputFileName = path.join(pluginOptions.publicPath, pluginOptions.fileName.replace(/\[name\]/i, name).replace(/\[hash\]/i, hash).replace(/\[extname\]/i, extname)).replace(/\\/g, "/");
             assets[outputFileName] = optimizedBuffer;
 
             if (pluginOptions.verbose) {
@@ -139,7 +139,7 @@ export default function (userOptions = {}) {
           });
         } else {
           hash = crypto.createHash("sha1").update(buffer).digest("hex").substr(0, pluginOptions.hashLength);
-          outputFileName = path.join(pluginOptions.publicPath, pluginOptions.fileName.replace(/\[name\]/i, name).replace(/\[hash\]/i, hash).replace(/\[extname\]/i, extname));
+          outputFileName = path.join(pluginOptions.publicPath, pluginOptions.fileName.replace(/\[name\]/i, name).replace(/\[hash\]/i, hash).replace(/\[extname\]/i, extname)).replace(/\\/g, "/");
           assets[outputFileName] = buffer;
 
           return `export default new URL("${outputFileName}", import.meta.url).href;`;
