@@ -129,7 +129,7 @@ export function imagemin (userOptions = {}) {
               const inputSize = buffer.toString().length;
               const outputSize = optimizedBuffer.toString().length;
               const smaller = outputSize < inputSize;
-              const difference = Math.round(Math.abs(((outputSize / inputSize) * 100) - 1));
+              const difference = Math.round(Math.abs(((outputSize / inputSize) - 1) * 100));
               console.log(chalk.green.bold(`${logPrefix} Optimized ${outputFileName}: ${smaller ? `~${difference}% smaller 🎉` : chalk.red(`~${difference}% bigger 🤕`)}`));
             }
 
