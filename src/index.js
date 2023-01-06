@@ -98,7 +98,7 @@ export function imagemin (userOptions = {}) {
   return {
     name: "imagemin",
     buildStart () {
-      if (pluginOptions.verbose && pluginOptions.disable) {
+      if (pluginOptions.verbose) {
         pluginOptions.disable ? console.log(chalk.yellow.bold(`${logPrefix} Skipping image optimizations.`)) : console.log(chalk.green.bold(`${logPrefix} Optimizing images...`));
       }
     },
